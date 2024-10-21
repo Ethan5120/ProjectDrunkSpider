@@ -1,11 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Burst.CompilerServices;
 using UnityEngine;
 
 public class DragSpider2 : MonoBehaviour
 {
     public float force = 500f;
     Rigidbody2D selectedRigidBody;
+    GameObject currentLeg;
+    public LayerMask grabLayer;
 
     private void FixedUpdate()
     {
@@ -25,6 +28,8 @@ public class DragSpider2 : MonoBehaviour
 
         if (Input.GetMouseButtonUp(0))
         {
+            currentLeg.GetComponent<LegController>().gTime = 3f;
+
             selectedRigidBody = null;
         }
     }
@@ -32,13 +37,15 @@ public class DragSpider2 : MonoBehaviour
     Rigidbody2D GetRigidbodyFromMouseClick()
     {
         Vector2 clickPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        RaycastHit2D hit = Physics2D.Raycast(clickPoint, Vector2.zero);
+        RaycastHit2D hit = Physics2D.Raycast(clickPoint, Vector2.zero, grabLayer);
 
         if(hit)
         {
-            if (hit.collider.gameObject.GetComponent<Rigidbody2D>() != null)
+            if (hit.collider.gameObject.GetComponent<Rigidbody2D>() != null && hit.collider.gameObject.GetComponent<LegController>())
             {
-                return hit .collider.gameObject.GetComponent<Rigidbody2D>();
+                currentLeg = hit.collider.gameObject;
+                currentLeg.GetComponent<LegController>().gTime = 0f;
+                return hit .collider.gameObject.GetComponent<Rigidbody2D>();     
             }
         }
 
