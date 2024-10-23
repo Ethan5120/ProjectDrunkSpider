@@ -9,6 +9,7 @@ public class DragSpider2 : MonoBehaviour
     Rigidbody2D selectedRigidBody;
     GameObject currentLeg;
     public LayerMask grabLayer;
+    [SerializeField] float hTime = 3f;
 
     private void FixedUpdate()
     {
@@ -21,8 +22,10 @@ public class DragSpider2 : MonoBehaviour
 
     private void Update()
     {
+        hTime -= 1 * Time.deltaTime;
         if (Input.GetMouseButtonDown(0))
         {
+            hTime = 2;
             selectedRigidBody = GetRigidbodyFromMouseClick();
         }
 
@@ -30,6 +33,12 @@ public class DragSpider2 : MonoBehaviour
         {
             currentLeg.GetComponent<LegController>().gTime = 3f;
 
+            selectedRigidBody = null;
+        }
+
+        if (hTime < 0)
+        {
+            currentLeg = null;
             selectedRigidBody = null;
         }
     }
